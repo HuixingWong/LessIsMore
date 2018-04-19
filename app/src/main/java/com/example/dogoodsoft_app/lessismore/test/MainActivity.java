@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,8 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements Handler.Callback{
 
     private NameViewModel mModel;
-    @BindView(R.id.name_tv) TextView nameTv;
+    @BindView(R.id.name_tv)
+    Button nameTv;
     private static final String TAG = "ONLYFUCK";
 
     @BindView(R.id.show_img)
