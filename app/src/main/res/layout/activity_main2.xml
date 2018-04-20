@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context="com.example.dogoodsoft_app.lessismore.Main2Activity">
 
+
+    <com.example.dogoodsoft_app.lessismore.widget.TelescopeView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </android.support.constraint.ConstraintLayout>

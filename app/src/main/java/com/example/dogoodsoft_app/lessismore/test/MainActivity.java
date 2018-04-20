@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback{
         }
 
         Intent mIntent = new Intent();
-        ComponentName mComp = new ComponentName("com.ruanmei.ithome","com.ruanmei.ithome.MainActivity1")
-                ;//注意AcitivityName(目标应用程序)要完整的，带包名的PackageName的
+        ComponentName mComp = new ComponentName("com.ruanmei.ithome","com.ruanmei.ithome.MainActivity1");
+        //注意AcitivityName(目标应用程序)要完整的，带包名的PackageName的
         mIntent.setComponent(mComp);
         startActivity(mIntent);
     }
