@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dogoodsoft_app.lessismore.R;
+import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -32,7 +33,7 @@ import butterknife.OnClick;
  * Created by dogoodsoft-app on 2018/3/26.
  */
 
-public class MainActivity extends AppCompatActivity implements Handler.Callback{
+public class MainActivity extends BaseActivity implements Handler.Callback{
 
     private NameViewModel mModel;
     @BindView(R.id.name_tv)

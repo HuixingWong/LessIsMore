@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
+
 import java.util.HashSet;
 
-public class Main2Activity extends AppCompatActivity {
+public class Main2Activity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

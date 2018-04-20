@@ -80,4 +80,11 @@ dependencies {
 
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+
+    implementation 'skin.support:skin-support:3.0.0'                   // skin-support 基础控件支持
+    implementation 'skin.support:skin-support-design:3.0.0'            // skin-support-design material design 控件支持[可选]
+    implementation 'skin.support:skin-support-cardview:3.0.0'          // skin-support-cardview CardView 控件支持[可选]
+    implementation 'skin.support:skin-support-constraint-layout:3.0.0'
+
 }

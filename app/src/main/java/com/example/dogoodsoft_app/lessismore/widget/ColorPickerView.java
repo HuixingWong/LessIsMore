@@ -158,6 +158,7 @@ public class ColorPickerView extends View {
 
         mIndicatorEnable = array.getBoolean(R.styleable.ColorPickerView_indicatorEnable, true);
 
+        mIndicatorEnable = false;
         array.recycle();
 
     }
