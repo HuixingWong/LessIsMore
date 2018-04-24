@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
+import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
 import com.example.dogoodsoft_app.lessismore.test.MainActivity;
+import com.example.dogoodsoft_app.lessismore.test.X5WebViewActivity;
 import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
 
 import butterknife.BindView;
@@ -29,8 +31,15 @@ public class Main3Activity extends BaseActivity {
     @OnClick(R.id.jump2)
     public void jump2(){
 
+        startActivity(new Intent(Main3Activity.this, X5WebViewActivity.class));
+
+    }
+
+    @OnClick(R.id.jump3)
+    public void jump3(){
 
 
+        startActivity(new Intent(Main3Activity.this, RxActivity.class));
     }
 
     @Override
