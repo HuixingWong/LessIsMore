@@ -24,6 +24,7 @@ import io.reactivex.android.BuildConfig;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -42,7 +43,7 @@ public class RxActivity extends AppCompatActivity {
 
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
-        test4();
+        test6();
 
     }
 
@@ -191,6 +192,32 @@ public class RxActivity extends AppCompatActivity {
 
 
         Api api = retrofit.create(Api.class);
+
+    }
+
+
+    public void test6(){
+
+
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                emitter.onNext(1);
+                emitter.onNext(2);
+                emitter.onNext(3);
+            }
+        }).map(new Function<Integer, String>() {
+            @Override
+            public String apply(Integer integer) throws Exception {
+                return "This is result " + integer;
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.d(TAG, s);
+            }
+        });
+
 
     }
 

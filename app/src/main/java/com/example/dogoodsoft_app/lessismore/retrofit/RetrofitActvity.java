@@ -18,7 +18,10 @@ import butterknife.OnClick;
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +36,9 @@ public class RetrofitActvity extends AppCompatActivity {
     public static final String RANDOM_TYPE = "random";
     public static final String TODAY_TYPE = "today";
 
+    //用来防止内存泄漏什么的，在退出Activity的时候用来切断水管。
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     @BindView(R.id.tv)
     TextView mTv;
 
@@ -40,32 +46,35 @@ public class RetrofitActvity extends AppCompatActivity {
     TextView mMessage;
 
     @OnClick(R.id.today)
-    public void today(){
+    public void today() {
 
         retrofitWithRx(TODAY_TYPE);
 
     }
 
     @OnClick(R.id.random)
-    public void random(){
+    public void random() {
 
         retrofitWithRx(RANDOM_TYPE);
 
     }
 
-    @OnClick(R.id.after)public void after(){
+    @OnClick(R.id.after)
+    public void after() {
 
         nextDay();
 
     }
 
-    @OnClick(R.id.before) public void before(){
+    @OnClick(R.id.before)
+    public void before() {
 
         beforeDay();
 
     }
 
     String BASE_URL = "https://interface.meiriyiwen.com/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +85,12 @@ public class RetrofitActvity extends AppCompatActivity {
 
         retrofitWithRx(TODAY_TYPE);
 
+        retrofitWithRx2(RANDOM_TYPE);
+
     }
 
 
-    public void retrofit1(String type){
+    public void retrofit1(String type) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -100,10 +111,10 @@ public class RetrofitActvity extends AppCompatActivity {
 
 
                 Article.Data data = response.body().getData();
-                mMessage.setText(data.getTitle()+"     "+data.getAuthor()+","+data.getDate().getCurr());
+                mMessage.setText(data.getTitle() + "     " + data.getAuthor() + "," + data.getDate().getCurr());
                 mTv.setText(Html.fromHtml(data.getContent()));
 
-                mCurr  = data.getDate().getCurr();
+                mCurr = data.getDate().getCurr();
 
 
             }
@@ -112,7 +123,7 @@ public class RetrofitActvity extends AppCompatActivity {
             public void onFailure(Call<Article> call, Throwable t) {
 
 
-                Toast.makeText(RetrofitActvity.this, ""+t.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RetrofitActvity.this, "" + t.toString(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -121,7 +132,7 @@ public class RetrofitActvity extends AppCompatActivity {
     }
 
 
-    private void nextDay(){
+    private void nextDay() {
 
 
         mCurr = DateUtils.getNext(mCurr);
@@ -131,7 +142,7 @@ public class RetrofitActvity extends AppCompatActivity {
 
     }
 
-    private void beforeDay(){
+    private void beforeDay() {
 
 
         mCurr = DateUtils.getBefore(mCurr);
@@ -142,7 +153,7 @@ public class RetrofitActvity extends AppCompatActivity {
     }
 
 
-    public void retrofit2(String data){
+    public void retrofit2(String data) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -159,7 +170,7 @@ public class RetrofitActvity extends AppCompatActivity {
             public void onResponse(Call<Article> call, Response<Article> response) {
 
                 Article.Data data = response.body().getData();
-                mMessage.setText(data.getTitle()+"     "+data.getAuthor()+","+data.getDate().getCurr());
+                mMessage.setText(data.getTitle() + "     " + data.getAuthor() + "," + data.getDate().getCurr());
                 mTv.setText(Html.fromHtml(data.getContent()));
 
             }
@@ -174,8 +185,7 @@ public class RetrofitActvity extends AppCompatActivity {
     }
 
 
-
-    public void retrofitWithRx(String type){
+    public void retrofitWithRx(String type) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -193,16 +203,17 @@ public class RetrofitActvity extends AppCompatActivity {
                     @Override
                     public void onSubscribe(Disposable d) {
 
+                        compositeDisposable.add(d);
                     }
 
                     @Override
                     public void onNext(Article article) {
 
                         Article.Data data = article.getData();
-                        mMessage.setText(data.getTitle()+"     "+data.getAuthor()+","+data.getDate().getCurr());
+                        mMessage.setText(data.getTitle() + "     " + data.getAuthor() + "," + data.getDate().getCurr());
                         mTv.setText(Html.fromHtml(data.getContent()));
 
-                        mCurr  = data.getDate().getCurr();
+                        mCurr = data.getDate().getCurr();
 
                     }
 
@@ -219,4 +230,44 @@ public class RetrofitActvity extends AppCompatActivity {
 
     }
 
+    public void retrofitWithRx2(String type) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())//Gson适配器
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//rxjva适配器
+                .build();
+
+
+        Api api = retrofit.create(Api.class);
+
+        api.getArticalRX(type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<Article, String>() {
+
+                    @Override
+                    public String apply(Article article) {
+                        return article.getData().getContent();
+                    }
+                }).subscribe(new Consumer<String>() {
+
+
+            @Override
+            public void accept(String s) throws Exception {
+
+                Toast.makeText(RetrofitActvity.this,
+                        "the content is :" + s, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        compositeDisposable.clear();
+    }
 }
