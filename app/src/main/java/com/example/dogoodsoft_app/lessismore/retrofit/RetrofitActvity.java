@@ -7,9 +7,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dogoodsoft_app.lessismore.R;
+import com.example.dogoodsoft_app.lessismore.utils.DateUtils;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,12 +22,42 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitActvity extends AppCompatActivity {
 
+    String mCurr;
+
+    public static final String RANDOM_TYPE = "random";
+    public static final String TODAY_TYPE = "today";
+
     @BindView(R.id.tv)
     TextView mTv;
 
     @BindView(R.id.messages)
     TextView mMessage;
 
+    @OnClick(R.id.today)
+    public void today(){
+
+        retrofit1(TODAY_TYPE);
+
+    }
+
+    @OnClick(R.id.random)
+    public void random(){
+
+        retrofit1(RANDOM_TYPE);
+
+    }
+
+    @OnClick(R.id.after)public void after(){
+
+        nextDay();
+
+    }
+
+    @OnClick(R.id.before) public void before(){
+
+        beforeDay();
+
+    }
 
     String BASE_URL = "https://interface.meiriyiwen.com/";
     @Override
@@ -34,14 +68,12 @@ public class RetrofitActvity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-        retrofit1();
-
-
+        retrofit1(TODAY_TYPE);
 
     }
 
 
-    public void retrofit1(){
+    public void retrofit1(String type){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -51,7 +83,7 @@ public class RetrofitActvity extends AppCompatActivity {
 
         Api api = retrofit.create(Api.class);
 
-        Call<Article> call = api.getArtical();
+        Call<Article> call = api.getArtical(type);
 
         call.enqueue(new Callback<Article>(
 
@@ -60,35 +92,18 @@ public class RetrofitActvity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Article> call, Response<Article> response) {
 
-                if (response == null){
-                    Toast.makeText(RetrofitActvity.this, "response is null", Toast.LENGTH_SHORT).show();
-                }else {
-
-                    Toast.makeText(RetrofitActvity.this, ""+response.toString(), Toast.LENGTH_SHORT).show();
-                }
-
-//                mTv.setText(response.body().getData().getContent());
 
                 Article.Data data = response.body().getData();
                 mMessage.setText(data.getTitle()+"     "+data.getAuthor()+","+data.getDate().getCurr());
                 mTv.setText(Html.fromHtml(data.getContent()));
 
-                String curr = data.getDate().getCurr();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int i = Integer.parseInt(curr);
-
-                retrofit2((i+1)+"");
+                mCurr  = data.getDate().getCurr();
 
 
             }
 
             @Override
             public void onFailure(Call<Article> call, Throwable t) {
-
 
 
                 Toast.makeText(RetrofitActvity.this, ""+t.toString(), Toast.LENGTH_SHORT).show();
@@ -98,6 +113,29 @@ public class RetrofitActvity extends AppCompatActivity {
 
 
     }
+
+
+    private void nextDay(){
+
+
+        mCurr = DateUtils.getNext(mCurr);
+
+
+        retrofit2(mCurr);
+
+    }
+
+    private void beforeDay(){
+
+
+        mCurr = DateUtils.getBefore(mCurr);
+
+
+        retrofit2(mCurr);
+
+    }
+
+
     public void retrofit2(String data){
 
         Retrofit retrofit = new Retrofit.Builder()

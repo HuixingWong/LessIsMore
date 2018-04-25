@@ -11,8 +11,9 @@ public interface Api {
     @Headers({
             "Accept-Encoding: application/json",
             "User-Agent: MyRetrofit"})
-    @GET("article/random?dev=1")
-    Call<Article> getArtical();
+    @GET("article/{type}?dev=1")
+    Call<Article> getArtical(@Path("type") String path);
+
 
     @Headers({
             "Accept-Encoding: application/json",

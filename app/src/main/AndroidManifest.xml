@@ -34,7 +34,12 @@
         </activity>
         <activity android:name=".test.X5WebViewActivity" />
         <activity android:name=".rxjvaa.RxActivity" />
-        <activity android:name=".retrofit.RetrofitActvity"></activity>
+        <activity android:name=".retrofit.RetrofitActvity"
+            android:screenOrientation="portrait"
+            >
+
+
+        </activity>
     </application>
 
 </manifest>
