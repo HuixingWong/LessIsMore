@@ -14,8 +14,14 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -23,6 +29,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.BuildConfig;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -36,6 +43,8 @@ public class RxActivity extends AppCompatActivity {
 
     Retrofit retrofit;
 
+    private Subscription mSubscription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +52,11 @@ public class RxActivity extends AppCompatActivity {
 
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
-        test6();
-
+        demo5();
     }
 
 
-    public void test1(){
+    public void test1() {
 
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
@@ -98,7 +106,7 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-    public void test2(){
+    public void test2() {
 
 
         Observable.create(new ObservableOnSubscribe<Integer>() {
@@ -125,9 +133,7 @@ public class RxActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void test3(){
+    public void test3() {
         Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
@@ -150,7 +156,7 @@ public class RxActivity extends AppCompatActivity {
     }
 
     //初级线程切换
-    public void test4(){
+    public void test4() {
 
 
         Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
@@ -177,7 +183,7 @@ public class RxActivity extends AppCompatActivity {
     }
 
 
-    public void test5(){
+    public void test5() {
 
 
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
@@ -196,7 +202,8 @@ public class RxActivity extends AppCompatActivity {
     }
 
 
-    public void test6(){
+    //map 测试，转换数据
+    public void test6() {
 
 
         Observable.create(new ObservableOnSubscribe<Integer>() {
@@ -219,6 +226,358 @@ public class RxActivity extends AppCompatActivity {
         });
 
 
+    }
+
+
+    //zip 测试   组装功能
+
+    public void test7() {
+
+        Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                Log.d(TAG, "emit 1");
+                emitter.onNext(1);
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit 2");
+                emitter.onNext(2);
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit 3");
+                emitter.onNext(3);
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit 4");
+                emitter.onNext(4);
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit complete1");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io());
+
+        Observable<String> observable2 = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                Log.d(TAG, "emit A");
+                emitter.onNext("A");
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit B");
+                emitter.onNext("B");
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit C");
+                emitter.onNext("C");
+                Thread.sleep(1000);
+
+                Log.d(TAG, "emit D");
+                emitter.onNext("D");
+                Thread.sleep(1000);
+                Log.d(TAG, "emit complete2");
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io());
+
+
+        Observable.zip(observable1, observable2, new BiFunction<Integer, String, String>() {
+            @Override
+            public String apply(Integer integer, String s) throws Exception {
+                return integer + s;
+            }
+        }).subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(TAG, "onSubscribe");
+            }
+
+            @Override
+            public void onNext(String value) {
+                Log.d(TAG, "onNext: " + value);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError");
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete");
+            }
+        });
+
+    }
+
+
+    //没有背压快速发射事件测试
+    public void test8() {
+        Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                for (int i = 0; ; i++) {   //无限循环发事件
+                    emitter.onNext(i);
+                }
+            }
+        }).subscribeOn(Schedulers.io());
+
+        Observable<String> observable2 = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                emitter.onNext("A");
+            }
+        }).subscribeOn(Schedulers.io());
+
+        Observable.zip(observable1, observable2, new BiFunction<Integer, String, String>() {
+            @Override
+            public String apply(Integer integer, String s) throws Exception {
+                return integer + s;
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.d(TAG, s);
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Log.w(TAG, throwable);
+            }
+        });
+
+
+    }
+
+
+    public void demo1() {
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
+                        Log.d(TAG, "current requested: " + emitter.requested());
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribe(new Subscriber<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.d(TAG, "onSubscribe");
+                        mSubscription = s;
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.d(TAG, "onNext: " + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.w(TAG, "onError: ", t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+    }
+
+
+    public  void demo2() {
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
+                        Log.d(TAG, "current requested: " + emitter.requested());
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribe(new Subscriber<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.d(TAG, "onSubscribe");
+                        mSubscription = s;
+                        s.request(10); //我要打十个！
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.d(TAG, "onNext: " + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.w(TAG, "onError: ", t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+    }
+
+
+
+    public  void demo3() {
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(final FlowableEmitter<Integer> emitter) throws Exception {
+                        Log.d(TAG, "before emit, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 1");
+                        emitter.onNext(1);
+                        Log.d(TAG, "after emit 1, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 2");
+                        emitter.onNext(2);
+                        Log.d(TAG, "after emit 2, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 3");
+                        emitter.onNext(3);
+                        Log.d(TAG, "after emit 3, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit complete");
+                        emitter.onComplete();
+
+                        Log.d(TAG, "after emit complete, requested = " + emitter.requested());
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribe(new Subscriber<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.d(TAG, "onSubscribe");
+                        mSubscription = s;
+                        s.request(10);  //request 10
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.d(TAG, "onNext: " + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.w(TAG, "onError: ", t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+    }
+
+
+    public  void demo4() {
+        Flowable
+                .create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(final FlowableEmitter<Integer> emitter) throws Exception {
+                        Log.d(TAG, "before emit, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 1");
+                        emitter.onNext(1);
+                        Log.d(TAG, "after emit 1, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 2");
+                        emitter.onNext(2);
+                        Log.d(TAG, "after emit 2, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit 3");
+                        emitter.onNext(3);
+                        Log.d(TAG, "after emit 3, requested = " + emitter.requested());
+
+                        Log.d(TAG, "emit complete");
+                        emitter.onComplete();
+
+                        Log.d(TAG, "after emit complete, requested = " + emitter.requested());
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribe(new Subscriber<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.d(TAG, "onSubscribe");
+                        mSubscription = s;
+                        s.request(2);   //request 2
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.d(TAG, "onNext: " + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.w(TAG, "onError: ", t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
+                    }
+                });
+    }
+
+
+
+
+    public  void demo5() {
+        Flowable
+                .create(new FlowableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(FlowableEmitter<String> emitter) throws Exception {
+                        try {
+
+                            while (( true && !emitter.isCancelled()) ){
+                                while (emitter.requested() == 0) {
+                                    if (emitter.isCancelled()) {
+                                        break;
+                                    }
+                                }
+                                emitter.onNext("123");
+                            }
+
+                            emitter.onComplete();
+                        } catch (Exception e) {
+                            emitter.onError(e);
+                        }
+                    }
+                }, BackpressureStrategy.ERROR)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<String>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        mSubscription = s;
+                        s.request(1);
+                    }
+
+                    @Override
+                    public void onNext(String string) {
+                        System.out.println(string);
+                        try {
+                            Thread.sleep(2000);
+                            mSubscription.request(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        System.out.println(t);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
 }
