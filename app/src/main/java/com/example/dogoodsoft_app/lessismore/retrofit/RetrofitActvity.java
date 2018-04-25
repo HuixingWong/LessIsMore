@@ -8,12 +8,18 @@ import android.widget.Toast;
 
 import com.example.dogoodsoft_app.lessismore.R;
 import com.example.dogoodsoft_app.lessismore.utils.DateUtils;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,14 +42,14 @@ public class RetrofitActvity extends AppCompatActivity {
     @OnClick(R.id.today)
     public void today(){
 
-        retrofit1(TODAY_TYPE);
+        retrofitWithRx(TODAY_TYPE);
 
     }
 
     @OnClick(R.id.random)
     public void random(){
 
-        retrofit1(RANDOM_TYPE);
+        retrofitWithRx(RANDOM_TYPE);
 
     }
 
@@ -68,7 +74,7 @@ public class RetrofitActvity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-        retrofit1(TODAY_TYPE);
+        retrofitWithRx(TODAY_TYPE);
 
     }
 
@@ -166,4 +172,51 @@ public class RetrofitActvity extends AppCompatActivity {
 
 
     }
+
+
+
+    public void retrofitWithRx(String type){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())//Gson适配器
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//rxjva适配器
+                .build();
+
+
+        Api api = retrofit.create(Api.class);
+
+        api.getArticalRX(type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Article>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Article article) {
+
+                        Article.Data data = article.getData();
+                        mMessage.setText(data.getTitle()+"     "+data.getAuthor()+","+data.getDate().getCurr());
+                        mTv.setText(Html.fromHtml(data.getContent()));
+
+                        mCurr  = data.getDate().getCurr();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
 }
