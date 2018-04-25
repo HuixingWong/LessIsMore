@@ -191,31 +191,6 @@ public class RxActivity extends AppCompatActivity {
 
 
         Api api = retrofit.create(Api.class);
-        api.getCall()
-                .subscribeOn(Schedulers.io())               //在IO线程进行网络请求
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Articledata>() {
-
-                    @Override
-                    public void onSubscribe(Subscription s) {
-
-                    }
-
-                    @Override
-                    public void onNext(Articledata articledata) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
 
     }
 

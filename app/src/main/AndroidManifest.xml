@@ -33,7 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".test.X5WebViewActivity" />
-        <activity android:name=".rxjvaa.RxActivity"></activity>
+        <activity android:name=".rxjvaa.RxActivity" />
+        <activity android:name=".retrofit.RetrofitActvity"></activity>
     </application>
 
 </manifest>
