@@ -15,6 +15,8 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -101,7 +103,7 @@ public class RetrofitActvity extends AppCompatActivity {
 
         retrofitWithRx(TODAY_TYPE);
 
-//        retrofitWithRx2(RANDOM_TYPE);
+        retrofitWithRx3(RANDOM_TYPE);
 
     }
 
@@ -286,13 +288,50 @@ public class RetrofitActvity extends AppCompatActivity {
                 }).observeOn(AndroidSchedulers.mainThread()).
                 subscribe(new Consumer<String>() {
             @Override
-            public void accept(String s) throws Exception {
+            public void accept(String s) {
 
                 Toast.makeText(RetrofitActvity.this,
                         "the content is :" + s, Toast.LENGTH_LONG).show();
 
             }
         });
+
+    }
+
+
+    public void retrofitWithRx3(String type) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())//Gson适配器
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//rxjva适配器
+                .build();
+
+
+        Api api = retrofit.create(Api.class);
+
+        api.getArticalRX(type)
+                .subscribeOn(Schedulers.io())
+                .flatMap(new Function<Article, ObservableSource<Article.Data>>() {
+                    @Override
+                    public ObservableSource<Article.Data> apply(Article article) {
+
+                        return Observable.fromArray(article.getData());
+
+                    }
+                }).observeOn(Schedulers.io())
+                .map(new Function<Article.Data, String>() {
+                    @Override
+                    public String apply(Article.Data data) throws Exception {
+                        return data.getContent();
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        Toast.makeText(RetrofitActvity.this, ""+s, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
 
