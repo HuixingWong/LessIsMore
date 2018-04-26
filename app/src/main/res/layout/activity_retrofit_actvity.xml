@@ -39,26 +39,37 @@
 
 
         <Button
+            android:layout_weight="1"
             android:id="@+id/today"
             android:text="今天"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <Button
+            android:layout_weight="1"
             android:id="@+id/random"
             android:text="随机"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <Button
+            android:layout_weight="1"
             android:id="@+id/before"
             android:text="前一天"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <Button
+            android:layout_weight="1"
             android:id="@+id/after"
             android:text="后一天"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/first"
+            android:text="第一天"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

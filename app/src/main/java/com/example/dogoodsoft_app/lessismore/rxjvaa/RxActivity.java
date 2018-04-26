@@ -580,4 +580,10 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mSubscription.cancel();
+    }
 }

@@ -36,6 +36,17 @@ public class RetrofitActvity extends AppCompatActivity {
     public static final String RANDOM_TYPE = "random";
     public static final String TODAY_TYPE = "today";
 
+    private static final String FIRST_DAY = "20110306";
+    private static final String BEFORE_FIRST = "20110305";
+    private static final  String EMPTY_DAY = "20110307";
+    private static final String EMPTY_NEXT ="20110308";
+
+
+    private static final  int BEFORE = 0;
+    private static final  int NEXT = 1;
+    private static final  int SOMEDAY = 2;
+
+
     //用来防止内存泄漏什么的，在退出Activity的时候用来切断水管。
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -72,6 +83,11 @@ public class RetrofitActvity extends AppCompatActivity {
         beforeDay();
 
     }
+    @OnClick(R.id.first) public void first(){
+
+        mCurr = FIRST_DAY;
+        retrofit2(mCurr,2);
+    }
 
     String BASE_URL = "https://interface.meiriyiwen.com/";
 
@@ -85,7 +101,7 @@ public class RetrofitActvity extends AppCompatActivity {
 
         retrofitWithRx(TODAY_TYPE);
 
-        retrofitWithRx2(RANDOM_TYPE);
+//        retrofitWithRx2(RANDOM_TYPE);
 
     }
 
@@ -137,8 +153,11 @@ public class RetrofitActvity extends AppCompatActivity {
 
         mCurr = DateUtils.getNext(mCurr);
 
+        if (mCurr.equals(EMPTY_DAY)){
+            mCurr = EMPTY_NEXT;
+        }
 
-        retrofit2(mCurr);
+        retrofit2(mCurr,1);
 
     }
 
@@ -147,13 +166,17 @@ public class RetrofitActvity extends AppCompatActivity {
 
         mCurr = DateUtils.getBefore(mCurr);
 
+        if (mCurr.equals(BEFORE_FIRST) ){
+            mCurr = FIRST_DAY;
+        }
 
-        retrofit2(mCurr);
+
+        retrofit2(mCurr,0);
 
     }
 
 
-    public void retrofit2(String data) {
+    public void retrofit2(String data, final int type) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -169,6 +192,17 @@ public class RetrofitActvity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Article> call, Response<Article> response) {
 
+                if (response.body() == null){
+                    if (type == BEFORE){
+                        before();
+                        return;
+                    }
+
+                    if (type == NEXT){
+                        nextDay();
+                        return;
+                    }
+                }
                 Article.Data data = response.body().getData();
                 mMessage.setText(data.getTitle() + "     " + data.getAuthor() + "," + data.getDate().getCurr());
                 mTv.setText(Html.fromHtml(data.getContent()));
@@ -243,16 +277,14 @@ public class RetrofitActvity extends AppCompatActivity {
 
         api.getArticalRX(type)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<Article, String>() {
 
                     @Override
                     public String apply(Article article) {
                         return article.getData().getContent();
                     }
-                }).subscribe(new Consumer<String>() {
-
-
+                }).observeOn(AndroidSchedulers.mainThread()).
+                subscribe(new Consumer<String>() {
             @Override
             public void accept(String s) throws Exception {
 
