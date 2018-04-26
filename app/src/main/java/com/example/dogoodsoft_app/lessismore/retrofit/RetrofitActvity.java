@@ -1,8 +1,10 @@
 package com.example.dogoodsoft_app.lessismore.retrofit;
 
+import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,13 +43,15 @@ public class RetrofitActvity extends AppCompatActivity {
 
     private static final String FIRST_DAY = "20110306";
     private static final String BEFORE_FIRST = "20110305";
-    private static final  String EMPTY_DAY = "20110307";
-    private static final String EMPTY_NEXT ="20110308";
+    private static final String EMPTY_DAY = "20110307";
+    private static final String EMPTY_NEXT = "20110308";
 
 
-    private static final  int BEFORE = 0;
-    private static final  int NEXT = 1;
-    private static final  int SOMEDAY = 2;
+    private static final int BEFORE = 0;
+    private static final int NEXT = 1;
+    private static final int SOMEDAY = 2;
+
+    public static final String TAG = "FUCK";
 
 
     //用来防止内存泄漏什么的，在退出Activity的时候用来切断水管。
@@ -85,10 +90,12 @@ public class RetrofitActvity extends AppCompatActivity {
         beforeDay();
 
     }
-    @OnClick(R.id.first) public void first(){
+
+    @OnClick(R.id.first)
+    public void first() {
 
         mCurr = FIRST_DAY;
-        retrofit2(mCurr,2);
+        retrofit2(mCurr, 2);
     }
 
     String BASE_URL = "https://interface.meiriyiwen.com/";
@@ -155,11 +162,11 @@ public class RetrofitActvity extends AppCompatActivity {
 
         mCurr = DateUtils.getNext(mCurr);
 
-        if (mCurr.equals(EMPTY_DAY)){
+        if (mCurr.equals(EMPTY_DAY)) {
             mCurr = EMPTY_NEXT;
         }
 
-        retrofit2(mCurr,1);
+        retrofit2(mCurr, 1);
 
     }
 
@@ -168,12 +175,12 @@ public class RetrofitActvity extends AppCompatActivity {
 
         mCurr = DateUtils.getBefore(mCurr);
 
-        if (mCurr.equals(BEFORE_FIRST) ){
+        if (mCurr.equals(BEFORE_FIRST)) {
             mCurr = FIRST_DAY;
         }
 
 
-        retrofit2(mCurr,0);
+        retrofit2(mCurr, 0);
 
     }
 
@@ -194,13 +201,13 @@ public class RetrofitActvity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Article> call, Response<Article> response) {
 
-                if (response.body() == null){
-                    if (type == BEFORE){
+                if (response.body() == null) {
+                    if (type == BEFORE) {
                         before();
                         return;
                     }
 
-                    if (type == NEXT){
+                    if (type == NEXT) {
                         nextDay();
                         return;
                     }
@@ -287,18 +294,27 @@ public class RetrofitActvity extends AppCompatActivity {
                     }
                 }).observeOn(AndroidSchedulers.mainThread()).
                 subscribe(new Consumer<String>() {
-            @Override
-            public void accept(String s) {
+                    @Override
+                    public void accept(String s) {
 
-                Toast.makeText(RetrofitActvity.this,
-                        "the content is :" + s, Toast.LENGTH_LONG).show();
+                        Toast.makeText(RetrofitActvity.this,
+                                "the content is :" + s, Toast.LENGTH_LONG).show();
 
-            }
-        });
+                    }
+                });
 
     }
 
 
+    /**
+     * subscribeOn() 指定的是上游发送事件的线程, observeOn() 指定的是下游接收事件的线程.
+     * <p>
+     * 多次指定上游的线程只有第一次指定的有效, 也就是说多次调用subscribeOn() 只有第一次的有效, 其余的会被忽略.
+     * <p>
+     * 多次指定下游的线程是可以的, 也就是说每调用一次observeOn() , 下游的线程就会切换一次.
+     *
+     * @param type
+     */
     public void retrofitWithRx3(String type) {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -316,22 +332,34 @@ public class RetrofitActvity extends AppCompatActivity {
                     @Override
                     public ObservableSource<Article.Data> apply(Article article) {
 
+                        Log.e(TAG, Thread.currentThread().getName());
                         return Observable.fromArray(article.getData());
 
                     }
-                }).observeOn(Schedulers.io())
+                }).subscribeOn(Schedulers.io())//第二次又subscribeon不管用
                 .map(new Function<Article.Data, String>() {
                     @Override
                     public String apply(Article.Data data) throws Exception {
+                        Log.e(TAG, Thread.currentThread().getName());
                         return data.getContent();
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
+                }).filter(new Predicate<String>() {
+            @Override
+            public boolean test(String s) throws Exception {
+
+                return s.length() < 10;//过滤字符串的长度
+
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<String>() {
                     @Override
                     public void accept(String s) throws Exception {
-                        Toast.makeText(RetrofitActvity.this, ""+s, Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, Thread.currentThread().getName());
+                        Toast.makeText(RetrofitActvity.this, "" + s, Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
     }
 
