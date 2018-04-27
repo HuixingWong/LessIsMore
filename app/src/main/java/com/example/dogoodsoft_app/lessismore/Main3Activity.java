@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
 import com.example.dogoodsoft_app.lessismore.retrofit.RetrofitActvity;
 import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
@@ -49,6 +50,13 @@ public class Main3Activity extends BaseActivity {
 
 
         startActivity(new Intent(Main3Activity.this, RetrofitActvity.class));
+    }
+
+    @OnClick(R.id.file)
+    public void file(){
+
+
+        startActivity(new Intent(Main3Activity.this, FileActivity.class));
     }
 
     @Override
