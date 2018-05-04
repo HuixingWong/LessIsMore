@@ -36,8 +36,9 @@
         <activity android:name=".rxjvaa.RxActivity" />
         <activity
             android:name=".retrofit.RetrofitActvity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".aboutFile.FileActivity"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".aboutFile.FileActivity" />
+        <activity android:name=".arouter.RounterTestActivity"></activity>
     </application>
 
 </manifest>

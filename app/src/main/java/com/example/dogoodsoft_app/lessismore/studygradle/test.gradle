@@ -1,0 +1,8 @@
+def a = 1;
+def b = "hello world";
+def int c = 1;
+
+def hello() {
+    println ("hello world");
+    return 1;
+}

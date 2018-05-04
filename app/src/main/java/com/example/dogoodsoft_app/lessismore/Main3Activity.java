@@ -2,7 +2,6 @@ package com.example.dogoodsoft_app.lessismore;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
@@ -16,7 +15,6 @@ import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import skin.support.SkinCompatManager;
 
 public class Main3Activity extends BaseActivity {
 
@@ -57,6 +55,11 @@ public class Main3Activity extends BaseActivity {
 
 
         startActivity(new Intent(Main3Activity.this, FileActivity.class));
+    }
+
+    @OnClick(R.id.rounter)
+    public void rounter(){
+
     }
 
     @Override
