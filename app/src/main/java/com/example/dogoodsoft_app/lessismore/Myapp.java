@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
+
 import skin.support.SkinCompatManager;
 import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
@@ -29,6 +31,12 @@ public class Myapp extends Application{
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle bundle) {
+
+
+                if (activity instanceof BaseActivity){
+
+                    ((BaseActivity) activity).fuck();
+                }
 
             }
 

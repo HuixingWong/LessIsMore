@@ -17,4 +17,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
         getWindow().setBackgroundDrawable(new ColorDrawable(color));
     }
+
+    public  void fuck(){}
+
 }

@@ -3,6 +3,7 @@ package com.example.dogoodsoft_app.lessismore;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.widget.Button;
 
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
@@ -15,6 +16,7 @@ import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import tyrantgit.explosionfield.ExplosionField;
 
 public class Main3Activity extends BaseActivity {
 
@@ -57,8 +59,14 @@ public class Main3Activity extends BaseActivity {
         startActivity(new Intent(Main3Activity.this, FileActivity.class));
     }
 
+    @BindView(R.id.rounter)
+    Button btn;
     @OnClick(R.id.rounter)
     public void rounter(){
+
+        ExplosionField explosionField = new ExplosionField(this);
+        explosionField.expandExplosionBound(100,100);
+        explosionField.explode(btn);
 
     }
 
