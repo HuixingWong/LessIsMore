@@ -38,7 +38,8 @@
             android:name=".retrofit.RetrofitActvity"
             android:screenOrientation="portrait" />
         <activity android:name=".aboutFile.FileActivity" />
-        <activity android:name=".arouter.RounterTestActivity"></activity>
+        <activity android:name=".arouter.RounterTestActivity" />
+        <activity android:name=".dagger.DaggerActivity"></activity>
     </application>
 
 </manifest>

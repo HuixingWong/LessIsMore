@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.example.dogoodsoft_app.lessismore.dagger.DaggerActivity;
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
 import com.example.dogoodsoft_app.lessismore.retrofit.RetrofitActvity;
@@ -68,6 +69,14 @@ public class Main3Activity extends BaseActivity {
         explosionField.expandExplosionBound(100,100);
         explosionField.explode(btn);
 
+    }
+
+
+    @OnClick(R.id.dagger)
+    public void dagger(){
+
+
+        startActivity(new Intent(Main3Activity.this, DaggerActivity.class));
     }
 
     @Override
