@@ -8,6 +8,7 @@ import android.widget.Button;
 import com.example.dogoodsoft_app.lessismore.dagger.DaggerActivity;
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
+import com.example.dogoodsoft_app.lessismore.mvp.RxMvpActivity;
 import com.example.dogoodsoft_app.lessismore.retrofit.RetrofitActvity;
 import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
 import com.example.dogoodsoft_app.lessismore.test.MainActivity;
@@ -78,6 +79,14 @@ public class Main3Activity extends BaseActivity {
 
         startActivity(new Intent(Main3Activity.this, DaggerActivity.class));
     }
+
+    @OnClick(R.id.mvp)
+    public void mvp(){
+
+
+        startActivity(new Intent(Main3Activity.this, RxMvpActivity.class));
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
