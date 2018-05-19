@@ -2,7 +2,7 @@ package com.example.dogoodsoft_app.lessismore.mvp;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.text.Html;
 import android.widget.TextView;
 
 import com.example.dogoodsoft_app.lessismore.R;
@@ -19,12 +19,8 @@ public class RxMvpActivity extends AppCompatActivity implements Contract_vp.View
 
         presenter = new ImplPresent(this);
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.loadData();
-            }
-        });
+        findViewById(R.id.button).setOnClickListener(view ->
+                presenter.loadData());
 
 
 
@@ -33,7 +29,7 @@ public class RxMvpActivity extends AppCompatActivity implements Contract_vp.View
     @Override
     public void update(String str) {
 
-        textView.setText(str);
+        textView.setText(Html.fromHtml(str));
 
     }
 }
