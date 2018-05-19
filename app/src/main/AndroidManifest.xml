@@ -40,7 +40,8 @@
         <activity android:name=".aboutFile.FileActivity" />
         <activity android:name=".arouter.RounterTestActivity" />
         <activity android:name=".dagger.DaggerActivity" />
-        <activity android:name=".mvp.RxMvpActivity"></activity>
+        <activity android:name=".mvp.RxMvpActivity" />
+        <activity android:name=".lifecycle.LifeCycleTestActiity"></activity>
     </application>
 
 </manifest>
