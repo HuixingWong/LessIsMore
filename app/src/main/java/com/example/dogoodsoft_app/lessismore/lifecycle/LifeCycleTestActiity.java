@@ -1,7 +1,6 @@
 package com.example.dogoodsoft_app.lessismore.lifecycle;
 
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,10 +8,14 @@ import android.widget.Button;
 
 import com.example.dogoodsoft_app.lessismore.R;
 
+import me.drakeet.materialdialog.MaterialDialog;
+
 public class LifeCycleTestActiity extends AppCompatActivity {
 
 
     private Button button;
+    private MaterialDialog materialDialog;
+
 
     private final String TAG = "fuckfuck";
     @Override
@@ -26,10 +29,37 @@ public class LifeCycleTestActiity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(LifeCycleTestActiity.this).create().show();
+
+               show();
+
             }
         });
 
+    }
+
+    private void show(){
+
+         materialDialog = new MaterialDialog(LifeCycleTestActiity.this)
+                .setTitle("MaterialDialog")
+                .setMessage("Hello world!")
+                .setPositiveButton("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        materialDialog.dismiss();
+
+
+                    }
+                })
+                .setNegativeButton("CANCEL", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        materialDialog.dismiss();
+                    }
+                });
+
+        materialDialog.show();
     }
 
 
