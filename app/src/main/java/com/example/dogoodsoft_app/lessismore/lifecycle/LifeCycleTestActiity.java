@@ -13,6 +13,8 @@ import me.drakeet.materialdialog.MaterialDialog;
 public class LifeCycleTestActiity extends AppCompatActivity {
 
 
+    //被温水煮惯了，梦想的东西总是不敢于尝试，失败了又怎样，最多从头来过。
+
     private Button button;
     private MaterialDialog materialDialog;
 
@@ -26,6 +28,7 @@ public class LifeCycleTestActiity extends AppCompatActivity {
         Log.e(TAG, "onCreate");
 
         button = findViewById(R.id.button2);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

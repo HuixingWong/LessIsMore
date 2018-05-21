@@ -96,6 +96,13 @@ public class Main3Activity extends BaseActivity {
         startActivity(new Intent(Main3Activity.this, LifeCycleTestActiity.class));
     }
 
+    @OnClick(R.id.defineview)
+    public void defineview(){
+
+
+        startActivity(new Intent(Main3Activity.this, Main2Activity.class));
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
