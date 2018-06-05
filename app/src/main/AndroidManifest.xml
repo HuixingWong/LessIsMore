@@ -25,7 +25,9 @@
         <service android:name=".GrayService" />
         <service android:name=".GrayService$GrayInnerService" />
 
-        <activity android:name=".Main3Activity">
+        <activity android:name=".Main3Activity"
+            android:launchMode="singleTop"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

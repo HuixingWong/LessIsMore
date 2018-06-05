@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
 
+import com.example.dogoodsoft_app.lessismore.dagger.DaggerActivity;
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
 import com.example.dogoodsoft_app.lessismore.base.BaseActivity;
-import com.example.dogoodsoft_app.lessismore.dagger.DaggerActivity;
 import com.example.dogoodsoft_app.lessismore.lifecycle.LifeCycleTestActiity;
 import com.example.dogoodsoft_app.lessismore.mvp.RxMvpActivity;
 import com.example.dogoodsoft_app.lessismore.retrofit.RetrofitActvity;
@@ -16,14 +15,10 @@ import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
 import com.example.dogoodsoft_app.lessismore.test.MainActivity;
 import com.example.dogoodsoft_app.lessismore.test.X5WebViewActivity;
 import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
-import com.jakewharton.rxbinding2.view.RxView;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.functions.Consumer;
 import tyrantgit.explosionfield.ExplosionField;
 
 public class Main3Activity extends BaseActivity {
@@ -101,13 +96,6 @@ public class Main3Activity extends BaseActivity {
         startActivity(new Intent(Main3Activity.this, LifeCycleTestActiity.class));
     }
 
-    @OnClick(R.id.defineview)
-    public void defineview(){
-
-
-        startActivity(new Intent(Main3Activity.this, Main2Activity.class));
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,9 +124,6 @@ public class Main3Activity extends BaseActivity {
 
             }
         });
-
-
-
 
 
     }
