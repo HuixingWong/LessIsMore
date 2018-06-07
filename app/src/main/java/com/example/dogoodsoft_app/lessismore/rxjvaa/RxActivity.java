@@ -16,6 +16,8 @@ import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.BackpressureStrategy;
@@ -52,7 +54,20 @@ public class RxActivity extends AppCompatActivity {
 
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
-        demo5();
+//        demo5();
+//        new1();
+//        justUse();
+
+//        fromArrayuse();
+
+
+//        fromcallableUse();
+
+        fromFutureUse();
+
+
+
+
     }
 
 
@@ -580,10 +595,214 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
+
+    private void new1(){
+
+
+        //创建被观察者
+        Observable observable = Observable.create(e -> {
+
+            e.onNext(1);
+            e.onNext(2);
+            e.onNext(3);
+            e.onNext("fuck");
+
+        });
+
+        Observer observer = new Observer<Integer>(){
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+
+                Log.e(TAG, String.valueOf(integer));
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                Log.e(TAG,"fuck this is wrong " );
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+
+        observable.subscribe(observer);
+
+    }
+
+
+    //just操作符的use
+    private void justUse(){
+
+
+        Observable.just(1,2,3)
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                        Log.e(TAG,"this is  on sunscribe" );
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                        Log.e(TAG, "fuck"+integer);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                        Log.e(TAG, "this is fuck complete");
+
+                    }
+                });
+
+
+    }
+
+
+    //from 操作符中的fromarray的use
+    private void fromArrayuse(){
+
+        Integer [] array = new Integer[]{1,2,3,4};
+
+        Observable.fromArray(array)
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                        Log.e(TAG, "this is fromArray test start fuck");
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                        Log.e(TAG,"fuck"+integer);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                        Log.e(TAG,"fuck this is error");
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                        Log.e(TAG,"fuck complete");
+
+                    }
+                });
+
+    }
+
+
+    /**
+     * 这里的 Callable 是 java.util.concurrent 中的 Callable，Callable 和 Runnable 的用法基本一致，只是它会返回一个结果值，这个结果值就是发给观察者的。
+     */
+    private void  fromcallableUse(){
+
+
+
+        Observable.fromCallable(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return "what a fuk this is the from callableuse";
+            }
+        }).subscribe(new Observer<Object>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+                Log.e(TAG, "this is callableuse test start fuck");
+
+            }
+
+            @Override
+            public void onNext(Object object) {
+
+                Log.e(TAG,object.toString());
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                Log.e(TAG,"fuck this is error");
+
+            }
+
+            @Override
+            public void onComplete() {
+
+                Log.e(TAG,"fuck complete");
+
+            }
+        });
+
+
+    }
+
+    /**
+     * 参数中的 Future 是 java.util.concurrent 中的 Future，Future 的作用是增加了 cancel() 等方法操作 Callable，它可以通过 get() 方法来获取 Callable 返回的值。
+     */
+    private void fromFutureUse(){
+
+
+        FutureTask<String> futureTask = new FutureTask<>(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+
+                return "这是 future this is the from future result";
+            }
+        });
+
+        Observable.fromFuture(futureTask).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                futureTask.run();
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.e(TAG,s );
+            }
+        });
+    }
+
+
+
+
+
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        mSubscription.cancel();
+        if (mSubscription != null){
+
+            mSubscription.cancel();
+        }
+
     }
 }

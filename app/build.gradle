@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply from: "${rootProject.rootDir}/releaseinfo.gradle"
+
 
 android {
     compileSdkVersion 26
@@ -110,7 +112,7 @@ task  fuck(group:"important"){
     println 'fucking everything'
 }
 
-task handleReleaseFile(){
+task handleReleaseFile2(){
 
 
     def srcFile = file('release.xml')
@@ -140,7 +142,7 @@ task handleReleaseFile(){
 
 }
 
-task handleResultFileTest(dependsOn: handleReleaseFile){
+task handleResultFileTest(dependsOn: handleReleaseFile2){
 
     def dir =  new File(this.buildDir,'generated/release/')
 
