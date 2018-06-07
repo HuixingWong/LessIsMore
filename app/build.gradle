@@ -49,16 +49,17 @@ android {
 
     }
 
-    sourceSets {
 
-        main{
 
-            res.srcDirs = ['src/main/res','src/main/res-ad','src/main/res-player']
+}
 
-        }
+this.android.sourceSets{
+
+    main{
+
+        res.srcDirs = ['src/main/res','src/main/res-ad','src/main/res-player']
 
     }
-
 
 }
 

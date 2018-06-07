@@ -66,10 +66,45 @@ public class RxActivity extends AppCompatActivity {
         fromFutureUse();
 
 
-
-
     }
 
+    /**
+     * 参数中的 Future 是 java.util.concurrent 中的 Future，Future 的作用是增加了 cancel() 等方法操作 Callable，它可以通过 get() 方法来获取 Callable 返回的值。
+     */
+    private void fromFutureUse() {
+
+
+        FutureTask<String> futureTask = new FutureTask<>(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+
+                return "这是 future this is the from future result";
+            }
+        });
+
+        Observable.fromFuture(futureTask).doOnSubscribe(new Consumer<Disposable>() {
+            @Override
+            public void accept(Disposable disposable) throws Exception {
+                futureTask.run();
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.e(TAG, s);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mSubscription != null) {
+
+            mSubscription.cancel();
+        }
+
+    }
 
     public void test1() {
 
@@ -147,7 +182,6 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-
     public void test3() {
         Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
@@ -198,6 +232,8 @@ public class RxActivity extends AppCompatActivity {
     }
 
 
+    //zip 测试   组装功能
+
     public void test5() {
 
 
@@ -215,7 +251,6 @@ public class RxActivity extends AppCompatActivity {
         Api api = retrofit.create(Api.class);
 
     }
-
 
     //map 测试，转换数据
     public void test6() {
@@ -242,9 +277,6 @@ public class RxActivity extends AppCompatActivity {
 
 
     }
-
-
-    //zip 测试   组装功能
 
     public void test7() {
 
@@ -325,7 +357,6 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-
     //没有背压快速发射事件测试
     public void test8() {
         Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
@@ -364,7 +395,6 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-
     public void demo1() {
         Flowable
                 .create(new FlowableOnSubscribe<Integer>() {
@@ -398,8 +428,7 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
-
-    public  void demo2() {
+    public void demo2() {
         Flowable
                 .create(new FlowableOnSubscribe<Integer>() {
                     @Override
@@ -433,9 +462,7 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
-
-
-    public  void demo3() {
+    public void demo3() {
         Flowable
                 .create(new FlowableOnSubscribe<Integer>() {
                     @Override
@@ -486,8 +513,7 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
-
-    public  void demo4() {
+    public void demo4() {
         Flowable
                 .create(new FlowableOnSubscribe<Integer>() {
                     @Override
@@ -538,17 +564,14 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
-    public  void demo5() {
+    public void demo5() {
         Flowable
                 .create(new FlowableOnSubscribe<String>() {
                     @Override
                     public void subscribe(FlowableEmitter<String> emitter) throws Exception {
                         try {
 
-                            while (( true && !emitter.isCancelled()) ){
+                            while ((true && !emitter.isCancelled())) {
                                 while (emitter.requested() == 0) {
                                     if (emitter.isCancelled()) {
                                         break;
@@ -595,8 +618,7 @@ public class RxActivity extends AppCompatActivity {
                 });
     }
 
-
-    private void new1(){
+    private void new1() {
 
 
         //创建被观察者
@@ -609,7 +631,7 @@ public class RxActivity extends AppCompatActivity {
 
         });
 
-        Observer observer = new Observer<Integer>(){
+        Observer observer = new Observer<Integer>() {
 
             @Override
             public void onSubscribe(Disposable d) {
@@ -626,7 +648,7 @@ public class RxActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable e) {
 
-                Log.e(TAG,"fuck this is wrong " );
+                Log.e(TAG, "fuck this is wrong ");
 
             }
 
@@ -641,23 +663,22 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-
     //just操作符的use
-    private void justUse(){
+    private void justUse() {
 
 
-        Observable.just(1,2,3)
+        Observable.just(1, 2, 3)
                 .subscribe(new Observer<Integer>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
-                        Log.e(TAG,"this is  on sunscribe" );
+                        Log.e(TAG, "this is  on sunscribe");
                     }
 
                     @Override
                     public void onNext(Integer integer) {
 
-                        Log.e(TAG, "fuck"+integer);
+                        Log.e(TAG, "fuck" + integer);
 
                     }
 
@@ -677,11 +698,10 @@ public class RxActivity extends AppCompatActivity {
 
     }
 
-
     //from 操作符中的fromarray的use
-    private void fromArrayuse(){
+    private void fromArrayuse() {
 
-        Integer [] array = new Integer[]{1,2,3,4};
+        Integer[] array = new Integer[]{1, 2, 3, 4};
 
         Observable.fromArray(array)
                 .subscribe(new Observer<Integer>() {
@@ -695,33 +715,31 @@ public class RxActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Integer integer) {
 
-                        Log.e(TAG,"fuck"+integer);
+                        Log.e(TAG, "fuck" + integer);
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
 
-                        Log.e(TAG,"fuck this is error");
+                        Log.e(TAG, "fuck this is error");
 
                     }
 
                     @Override
                     public void onComplete() {
 
-                        Log.e(TAG,"fuck complete");
+                        Log.e(TAG, "fuck complete");
 
                     }
                 });
 
     }
 
-
     /**
      * 这里的 Callable 是 java.util.concurrent 中的 Callable，Callable 和 Runnable 的用法基本一致，只是它会返回一个结果值，这个结果值就是发给观察者的。
      */
-    private void  fromcallableUse(){
-
+    private void fromcallableUse() {
 
 
         Observable.fromCallable(new Callable<Object>() {
@@ -740,69 +758,25 @@ public class RxActivity extends AppCompatActivity {
             @Override
             public void onNext(Object object) {
 
-                Log.e(TAG,object.toString());
+                Log.e(TAG, object.toString());
 
             }
 
             @Override
             public void onError(Throwable e) {
 
-                Log.e(TAG,"fuck this is error");
+                Log.e(TAG, "fuck this is error");
 
             }
 
             @Override
             public void onComplete() {
 
-                Log.e(TAG,"fuck complete");
+                Log.e(TAG, "fuck complete");
 
             }
         });
 
-
-    }
-
-    /**
-     * 参数中的 Future 是 java.util.concurrent 中的 Future，Future 的作用是增加了 cancel() 等方法操作 Callable，它可以通过 get() 方法来获取 Callable 返回的值。
-     */
-    private void fromFutureUse(){
-
-
-        FutureTask<String> futureTask = new FutureTask<>(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-
-                return "这是 future this is the from future result";
-            }
-        });
-
-        Observable.fromFuture(futureTask).doOnSubscribe(new Consumer<Disposable>() {
-            @Override
-            public void accept(Disposable disposable) throws Exception {
-                futureTask.run();
-            }
-        }).subscribe(new Consumer<String>() {
-            @Override
-            public void accept(String s) throws Exception {
-                Log.e(TAG,s );
-            }
-        });
-    }
-
-
-
-
-
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (mSubscription != null){
-
-            mSubscription.cancel();
-        }
 
     }
 }
