@@ -15,6 +15,7 @@ import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
 import com.example.dogoodsoft_app.lessismore.test.MainActivity;
 import com.example.dogoodsoft_app.lessismore.test.X5WebViewActivity;
 import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
+import com.example.dogoodsoft_app.lessismore.widget.NumberProgressBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +26,41 @@ public class Main3Activity extends BaseActivity {
 
     @BindView(R.id.colorview)
     ColorPickerView colorPickerView;
+
+    @BindView(R.id.my_progress)
+    NumberProgressBar bar;
+
+    @OnClick(R.id.my_progress)
+    public void clickProgress(){
+
+        new Thread(() -> {
+
+            int i =0;
+
+            while (i < 100){
+
+                try {
+                    Thread.sleep(100);
+                    i++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                int finalI = i;
+                runOnUiThread(() -> {
+
+                    bar.setProgress(finalI);
+
+                });
+
+            }
+
+
+
+
+        }).start();
+
+    }
 
     @OnClick(R.id.jump_1)
     public void jump1(){
