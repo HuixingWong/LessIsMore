@@ -13,8 +13,6 @@ import android.view.View;
 
 import com.example.dogoodsoft_app.lessismore.R;
 
-import java.security.PublicKey;
-
 public class NumberProgressBar extends View {
 
     private final int default_text_color = Color.rgb(66, 145, 241);
@@ -63,10 +61,13 @@ public class NumberProgressBar extends View {
 
     private float mOffset;
 
+    //是否绘制没有跑的
     private boolean mDrawUnreachedBar = true;
 
+    //是否绘制跑过的
     private boolean mDrawReacheadBar = true;
 
+    //是否绘制文字
     private boolean mIFDrawText = true;
 
     private OnProgressBarListener mListener;
@@ -467,11 +468,6 @@ public class NumberProgressBar extends View {
     public void setOnProgressBarlistener(OnProgressBarListener listener){
         mListener = listener;
     }
-
-
-
-
-
 
 
 }

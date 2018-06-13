@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!--name为声明的"属性集合"名，可以随便取，但是最好是设置为跟我们的View一样的名称-->
+<declare-styleable name="CircleView">
+    <!--声明我们的属性，名称为default_size,取值类型为尺寸类型（dp,px等）-->
+    <attr name="circlesize" format="integer" />
+    <attr name="textsize" format="integer" />
+    <attr name="strokecolor" format="color" />
+    <attr name="strokewidth" format="integer" />
+    <attr name="circle_weight" format="float" />
+</declare-styleable>
+
+</resources>
