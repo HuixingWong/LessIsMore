@@ -44,6 +44,10 @@
         <activity android:name=".dagger.DaggerActivity" />
         <activity android:name=".mvp.RxMvpActivity" />
         <activity android:name=".lifecycle.LifeCycleTestActiity"></activity>
+        <activity android:name=".widget.AccelerometerPlayActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            ></activity>
     </application>
 
 </manifest>

@@ -3,7 +3,10 @@ package com.example.dogoodsoft_app.lessismore;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.dogoodsoft_app.lessismore.dagger.DaggerActivity;
 import com.example.dogoodsoft_app.lessismore.aboutFile.FileActivity;
@@ -162,5 +165,39 @@ public class Main3Activity extends BaseActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+
+
+            colorPickerView.setVisibility(View.GONE);
+            return true;
+
+
+
+        }else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+
+            colorPickerView.setVisibility(View.VISIBLE);
+
+            return true;
+
+        }else if (keyCode == KeyEvent.KEYCODE_HOME){
+
+            System.exit(0);
+            return  true;
+
+        }
+
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return super.onKeyUp(keyCode, event);
     }
 }
