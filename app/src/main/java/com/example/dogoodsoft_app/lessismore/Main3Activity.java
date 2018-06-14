@@ -17,6 +17,7 @@ import com.example.dogoodsoft_app.lessismore.retrofit.RetrofitActvity;
 import com.example.dogoodsoft_app.lessismore.rxjvaa.RxActivity;
 import com.example.dogoodsoft_app.lessismore.test.MainActivity;
 import com.example.dogoodsoft_app.lessismore.test.X5WebViewActivity;
+import com.example.dogoodsoft_app.lessismore.widget.AccelerometerPlayActivity;
 import com.example.dogoodsoft_app.lessismore.widget.ColorPickerView;
 import com.example.dogoodsoft_app.lessismore.widget.NumberProgressBar;
 
@@ -135,6 +136,12 @@ public class Main3Activity extends BaseActivity {
         startActivity(new Intent(Main3Activity.this, LifeCycleTestActiity.class));
     }
 
+    @OnClick(R.id.fuck)
+    public void  fuck(){
+
+        startActivity(new Intent(Main3Activity.this, AccelerometerPlayActivity.class));
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

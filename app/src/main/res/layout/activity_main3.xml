@@ -89,6 +89,12 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
+    <Button
+        android:text="go to accletomer"
+        android:id="@+id/fuck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
 
 
